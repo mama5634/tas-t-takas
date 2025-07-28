@@ -115,12 +115,73 @@
         padding: 0.5rem;
       }
     }
-  </style>
+  
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  border: 6px solid #e5e7eb;
+  border-top: 6px solid #10b981;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none;
+}
+
+
+@media (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+  .container {
+    width: 100%;
+    padding: 1rem;
+  }
+  input, button {
+    font-size: 1rem;
+  }
+  .card {
+    padding: 1rem;
+  }
+  .ref-button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  h1 {
+    font-size: 1.25rem;
+  }
+}
+
+</style>
 </head>
 <body>
+
+<div id="overlay" class="overlay hidden">
+  <div class="spinner"></div>
+</div>
+
   <div class="container">
     <div class="logo">
-      <img src="https://via.placeholder.com/150x50?text=TaşıtTakas" alt="TaşıtTakas Logo">
+      <img src="logo.jpg" alt="TaşıtTakas Logo">
     </div>
     <div class="stepper">
       <div class="step active">1</div>
@@ -147,59 +208,7 @@
   </div>
   <script>
     function validateTC(tcNo) {
-      if (tcNo.length !== 11 || isNaN(tcNo)) return false;
-      let digits = tcNo.split('').map(Number);
-      if (digits[0] === 0) return false;
-      let oddSum = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];
-      let evenSum = digits[1] + digits[3] + digits[5] + digits[7];
-      let checkDigit10 = (oddSum * 7 - evenSum) % 10;
-      let checkDigit11 = (oddSum + evenSum + digits[9]) % 10;
-      return checkDigit10 === digits[9] && checkDigit11 === digits[10];
-    }
-
-    function generateRefCode() {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let refCode = '';
-      for (let i = 0; i < 8; i++) {
-        refCode += characters.charAt(Math.floor(Math.random() * characters.length));
-      }
-      document.getElementById('refCode').value = refCode;
-      document.getElementById('refError').style.display = 'none';
-    }
-
-    document.getElementById('paymentForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const tcNo = document.getElementById('tcNo').value;
-      const refCode = document.getElementById('refCode').value;
-      const tcError = document.getElementById('tcError');
-      const refError = document.getElementById('refError');
-      const submitBtn = document.getElementById('submitBtn');
-      const loader = document.getElementById('loader');
-      let isValid = true;
-
-      if (!validateTC(tcNo)) {
-        tcError.style.display = 'block';
-        isValid = false;
-      } else {
-        tcError.style.display = 'none';
-      }
-
-      if (refCode.trim().length < 5) {
-        refError.style.display = 'block';
-        isValid = false;
-      } else {
-        refError.style.display = 'none';
-      }
-
-      if (isValid) {
-        submitBtn.disabled = true;
-        loader.style.display = 'block';
-        sessionStorage.setItem('tcNo', tcNo);
-        sessionStorage.setItem('refCode', refCode);
-        setTimeout(() => {
-          window.location.href = 'odeme.html';
-        }, 1000);
-      }
+      return /^[0-9]{11}$/.test(tcNo);
     });
   </script>
 </body>
